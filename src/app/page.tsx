@@ -2,6 +2,7 @@
 
 import {ThumbsUp, ThumbsDown} from "lucide-react";
 import {useState, useEffect} from "react";
+import Swal from "sweetalert2";
 
 import {Product, Reviews, Users} from "@/components/ui/ProductInterface";
 import {Button} from "@/components/ui/button";
@@ -12,6 +13,7 @@ import {
   UpdateReviews,
   PostReviews,
 } from "@/components/api";
+import CardComponent from "@/components/CardComponent";
 
 export default function HomePage() {
   const [Usuarios, setUsuarios] = useState<Users[]>([]);
@@ -78,29 +80,25 @@ export default function HomePage() {
 
   const openAddReview = () => {
     setisAddReviewModalOpen(true);
-
-    /*if (!selectedProduct) return;
-
-    selectedProduct.reviews.push({
-      id: "r1",
-      productId: "p2",
-      userId: "u1",
-      content: "Muy mala loco todo ,a",
-      likes: 0,
-      dislikes: 0,
-    });
-    setSelectedProduct(selectedProduct);*/
   };
 
   const AddReview = async () => {
     if (!user || user.trim() === "") {
-      alert("Por favor, selecciona un usuario válido.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Selecciona un usuario ",
+      });
 
       return;
     }
 
-    if (!content) {
-      alert("Por favor, ingresa un comentario.");
+    if (!content || content.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ingresa un comentario",
+      });
 
       return;
     }
@@ -117,29 +115,7 @@ export default function HomePage() {
     <div className="flex max-w-[1920px] flex-col items-center">
       <section className="mt-8 w-full">
         <h2 className="mb-6 text-center text-3xl font-bold">Productos</h2>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
-          {Productos.map((product) => (
-            <div
-              key={product.id}
-              className="col-span-1 cursor-pointer rounded-lg border border-slate-200 bg-slate-800 p-4 text-center text-sm transition-transform duration-300 hover:scale-105 hover:shadow-lg"
-              onClick={() => openModal(product.id)}
-            >
-              <div className="flex w-full flex-col items-center gap-2">
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg shadow-md">
-                  <img
-                    alt={product.name}
-                    className="h-full w-full object-cover"
-                    src={product.image}
-                  />
-                </div>
-
-                <div className="mt-2 text-lg font-bold">{product.name}</div>
-
-                <div className="mt-1 text-xl font-semibold">${product.price}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <CardComponent Productos={Productos} openModal={openModal} />
       </section>
 
       {isModalOpen && SelectedReviews ? (
